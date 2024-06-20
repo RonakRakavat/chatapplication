@@ -2,79 +2,80 @@ import { User } from "../models/user.model.js"
 import bcrypt from 'bcrypt'
 import mongoose from "mongoose"
 
-const register = async(req,res) => {
+const register = async (req, res) => {
     try {
-        const {username,email,password}=req.body
-        const usernameCheck=await User.findOne({username})
-    
-        if(usernameCheck){
-            return res.json({msg:"username already exists",status:false})
+        const { username, email, password } = req.body
+        const usernameCheck = await User.findOne({ username })
+
+        if (usernameCheck) {
+            return res.json({ msg: "username already exists", status: false })
         }
-        const emailCheck=await User.findOne({email})
-        if(emailCheck){
-            return res.json({msg:"email already exists",status:false})
+        const emailCheck = await User.findOne({ email })
+        if (emailCheck) {
+            return res.json({ msg: "email already exists", status: false })
         }
-        const hashpassword=await bcrypt.hash(password,10)
-        const user=await User.create({
-            username:username,
-            email:email,
-            password:hashpassword})
+        const hashpassword = await bcrypt.hash(password, 10)
+        const user = await User.create({
+            username: username,
+            email: email,
+            password: hashpassword
+        })
         // delete user.password
         console.log("success")
-        return res.json({status:true,user})
+        return res.json({ status: true, user })
     } catch (error) {
         console.log("user not create")
-        return res.json({status:false,msg:"user not create"})
+        return res.json({ status: false, msg: "user not create" })
     }
 }
 
-export {register}
-const login = async(req,res) => {
+export { register }
+const login = async (req, res) => {
     try {
         console.log("ok")
-        const {username,password}=req.body
-        const user=await User.findOne({username})
-    
-        if(!user){
-            return res.json({msg:"No User found",status:false})
+        const { username, password } = req.body
+        const user = await User.findOne({ username })
+
+        if (!user) {
+            return res.json({ msg: "No User found", status: false })
         }
-        const isPassword=await bcrypt.compare(password,user.password)
-        if(!isPassword){
-            return res.json({msg:"Incorrect username or password",status:false})
+        const isPassword = await bcrypt.compare(password, user.password)
+        if (!isPassword) {
+            return res.json({ msg: "Incorrect username or password", status: false })
         }
-        
+
         // delete user.password
         console.log("success")
-        return res.json({status:true,user})
+        return res.json({ status: true, user })
     } catch (error) {
         console.log("user not create")
-        return res.json({status:false,msg:"user not create"})
+        return res.json({ status: false, msg: "user not create" })
     }
 }
 
-export {login}
+export { login }
 
-const setavatar=async(req,res,next)=>{
+const setavatar = async (req, res, next) => {
     try {
-        const Userid=req.params.id;
-        const avatarImage=req.body.image
-        const userData=await User.findByIdAndUpdate(Userid,{
-            isAvatarImageSet:true,
+        const Userid = req.params.id;
+        const avatarImage = req.body.image
+        const userData = await User.findByIdAndUpdate(Userid, {
+            isAvatarImageSet: true,
             avatarImage
-            })
-        return res.json({isset:userData.isAvatarImageSet,image:userData.avatarImage})
+        })
+        return res.json({ isset: userData.isAvatarImageSet, image: userData.avatarImage })
     } catch (error) {
         next(error)
     }
 
 }
 
-export {setavatar}
+export { setavatar }
 
 
-const getAllUser = async(req,res) => {
+const getAllUser = async (req, res) => {
     try {
-        const users=await User.find({_id:{$ne: req.params.id}}).select([
+        const users = await User.find({ _id: { $ne: req.params.id } }).select([
             "email",
             "username",
             "avatarImage",
@@ -86,5 +87,5 @@ const getAllUser = async(req,res) => {
     }
 }
 
-export {getAllUser}
+export { getAllUser }
 
