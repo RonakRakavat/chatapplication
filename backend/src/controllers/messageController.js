@@ -10,7 +10,7 @@ const addMessage = async (req, res, next) => {
             sender: from,
         })
         if (data) {
-            return res.json({ msg: "message add succesfulyy" })
+            return res.json({ msg: "message add succesfully" })
         } else {
             return res.json({ msg: "failed to add message " })
         }
